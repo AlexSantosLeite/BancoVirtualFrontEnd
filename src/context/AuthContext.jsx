@@ -1,4 +1,4 @@
-// src/context/AuthContext.jsx
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -67,6 +67,16 @@ export const AuthProvider = ({ children }) => {
         navigate('/login');
     };
 
+    const updateUserBalance = (newBalance) => {
+        if (user) { 
+            setUser(prevUser => ({
+                ...prevUser,
+                saldoConta: newBalance
+            }));
+            console.log('AuthContext updateUserBalance: Saldo do usuário atualizado no contexto para:', newBalance);
+        }
+    };
+    
     const value = {
         token,
         user,
@@ -74,6 +84,7 @@ export const AuthProvider = ({ children }) => {
         isLoading,
         loginAction,
         logoutAction,
+        updateUserBalance,
     };
 
     return (
