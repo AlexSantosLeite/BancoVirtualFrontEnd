@@ -1,0 +1,38 @@
+
+@use 'variables' as vars;
+
+.main-nav {
+  background-color: vars.$primary-brand-color; // Usando nossa cor primária
+  padding: vars.$spacing-md vars.$spacing-lg;
+  color: vars.$text-on-dark-bg; // Texto claro sobre fundo escuro
+
+  ul {
+    list-style: none;
+    display: flex;
+    justify-content: center; // Ou flex-start, flex-end
+    gap: vars.$spacing-lg;
+    margin: 0;
+    padding: 0;
+  }
+
+  a, .nav-button { // Para Links e o botão de Logout
+    color: vars.$text-on-dark-bg;
+    text-decoration: none;
+    font-weight: 500; // Semi-bold
+    padding: vars.$spacing-sm vars.$spacing-md;
+    border-radius: vars.$border-radius-sm;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1); // Efeito hover sutil
+      text-decoration: none;
+    }
+  }
+
+  .nav-button { // Estilo específico para o botão de logout se precisar ser diferente
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1em; // Para herdar o tamanho da fonte
+  }
+}

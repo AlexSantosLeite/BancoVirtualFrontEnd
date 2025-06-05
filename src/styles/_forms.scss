@@ -1,0 +1,105 @@
+
+@use 'variables' as vars;
+
+.form-group {
+  margin-bottom: vars.$spacing-md; // 1rem (16px) por padrão
+
+  label {
+    display: block;
+    font-weight: 500; // Semi-bold
+    color: vars.$text-secondary; // Cinza para o label
+    margin-bottom: vars.$spacing-sm; // 0.5rem (8px)
+    font-size: 0.9rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  textarea {
+    width: 100%;
+    padding: vars.$spacing-sm vars.$spacing-md; // 0.5rem 1rem
+    font-size: 1rem;
+    line-height: vars.$base-line-height;
+    color: vars.$text-primary;
+    background-color: vars.$background-light;
+    background-clip: padding-box;
+    border: 1px solid vars.$border-color-light;
+    border-radius: vars.$border-radius-md;
+    box-sizing: border-box; // Importante para o padding não aumentar o tamanho total
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    &:focus {
+      border-color: vars.$primary-brand-color; // Borda azul ao focar
+      outline: 0;
+      box-shadow: 0 0 0 0.2rem rgba(vars.$primary-brand-color, 0.25); // Um brilho sutil ao focar
+    }
+
+    &::placeholder {
+      color: vars.$text-secondary;
+      opacity: 0.7;
+    }
+  }
+
+  textarea {
+    resize: vertical; // Permite redimensionar apenas verticalmente
+    min-height: 80px;
+  }
+}
+
+// Estilo base para botões de formulário (podemos expandir isso em _buttons.scss depois)
+.form-button {
+  display: inline-block;
+  width: 100%; // Ocupa toda a largura por padrão
+  font-weight: 500;
+  color: vars.$text-on-dark-bg;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  background-color: vars.$primary-brand-color;
+  border: 1px solid vars.$primary-brand-color;
+  padding: vars.$spacing-sm vars.$spacing-lg; // 0.5rem 1.5rem
+  font-size: 1rem;
+  line-height: vars.$base-line-height;
+  border-radius: vars.$border-radius-md;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:hover {
+    background-color: darken(vars.$primary-brand-color, 10%); // Escurece um pouco no hover
+    border-color: darken(vars.$primary-brand-color, 12%);
+  }
+
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(vars.$primary-brand-color, 0.5);
+  }
+
+  &:disabled {
+    background-color: vars.$secondary-color;
+    border-color: vars.$secondary-color;
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+// Para mensagens de feedback (sucesso/erro)
+.form-feedback-message {
+    margin-top: vars.$spacing-md; 
+    padding: vars.$spacing-sm vars.$spacing-md; 
+    border-radius: vars.$border-radius-sm;
+    text-align: center;
+    font-size: 0.9rem;
+
+    &.success {
+        background-color: lighten(vars.$success-color, 35%); 
+        color: darken(vars.$success-color, 10%);
+        border: 1px solid lighten(vars.$success-color, 20%);
+    }
+
+    &.error {
+        background-color: lighten(vars.$danger-color, 30%);
+        color: darken(vars.$danger-color, 10%);
+        border: 1px solid lighten(vars.$danger-color, 15%);
+    }
+}

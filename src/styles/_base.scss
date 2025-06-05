@@ -1,0 +1,21 @@
+// src/styles/_base.scss
+@use 'variables' as vars;
+
+body {
+  margin: 0;
+  font-family: vars.$base-font-family;
+  font-size: vars.$base-font-size;
+  line-height: vars.$base-line-height;
+  color: vars.$text-primary; // Atualizado
+  background-color: vars.$background-light; // Atualizado
+}
+
+// ... (outros estilos base, usando as novas variáveis se os nomes mudaram) ...
+h1, h2, h3, h4, h5, h6 {
+  color: vars.$primary-brand-color; // Usando a nova cor primária
+  // ...
+}
+a {
+  color: vars.$secondary-brand-color; // Usando a nova cor secundária
+  // ...
+}

@@ -1,24 +1,23 @@
-
+// src/pages/DashboardPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom'; // Importar Link para navegação
+import { Link } from 'react-router-dom';
 
-// import './DashboardPage.css'; // Descomente se você criar um arquivo CSS para esta página
+// import './DashboardPage.css';
 
 function DashboardPage() {
-    const { user, token, isLoading: authIsLoading, logoutAction } = useAuth(); // Renomeado isLoading para authIsLoading para clareza
+    const { user, token, isLoading: authIsLoading, logoutAction } = useAuth(); 
     
     const [transactions, setTransactions] = useState([]);
     const [transactionsLoading, setTransactionsLoading] = useState(true);
     const [transactionsError, setTransactionsError] = useState('');
 
-    console.log('DashboardPage renderizando. authIsLoading:', authIsLoading, 'user:', user ? user.email : 'null');
+    // console.log('DashboardPage renderizando. authIsLoading:', authIsLoading, 'user:', user ? user.email : 'null'); // Log de renderização (pode remover se quiser)
 
     useEffect(() => {
         const fetchTransactions = async () => {
-            // Só busca se tivermos um token e o carregamento inicial do usuário/auth já tiver terminado
             if (token && !authIsLoading) { 
-                console.log('DashboardPage: Buscando histórico de transações com token...');
+                // console.log('DashboardPage: Buscando histórico de transações...'); // Log de busca (pode remover)
                 setTransactionsLoading(true);
                 setTransactionsError('');
                 try {
@@ -32,7 +31,7 @@ function DashboardPage() {
                     if (response.ok) {
                         const data = await response.json();
                         setTransactions(data);
-                        console.log('DashboardPage: Histórico de transações recebido:', data);
+                        // console.log('DashboardPage: Histórico de transações recebido:', data); // Log de sucesso (pode remover)
                     } else {
                         const errorData = await response.json();
                         console.error('DashboardPage: Erro ao buscar transações - Resposta não OK:', errorData);
@@ -46,15 +45,15 @@ function DashboardPage() {
                 }
             } else if (!authIsLoading) { 
                 setTransactionsLoading(false);
-                console.log('DashboardPage: Sem token ou auth ainda carregando, não buscando transações.');
+                // console.log('DashboardPage: Sem token ou auth ainda carregando, não buscando transações.'); // Log (pode remover)
             }
         };
 
         fetchTransactions();
-    }, [token, authIsLoading]); // Dependências atualizadas
+    }, [token, authIsLoading]);
 
     if (authIsLoading) {
-        console.log('DashboardPage: authIsLoading é true, mostrando "Carregando Usuário..."');
+        // console.log('DashboardPage: authIsLoading é true, mostrando "Carregando Usuário..."'); // Log (pode remover)
         return ( 
             <div> 
                 <h2>Painel de Controle</h2> 
@@ -64,16 +63,16 @@ function DashboardPage() {
     }
 
     if (!user) {
-        console.log('DashboardPage: !user é true (e não está authIsLoading), mostrando "Você não está logado..."');
+        // console.log('DashboardPage: !user é true (e não está authIsLoading), mostrando "Você não está logado..."'); // Log (pode remover)
         return ( 
             <div> 
                 <h2>Painel de Controle</h2> 
-                <p>Você não está logado. Por favor, <Link to="/login">faça login</Link>.</p>
+                <p>Você não está logado. Por favor, <Link to="/login">faça login</Link>.</p> 
             </div> 
         );
     }
 
-    console.log('DashboardPage: Usuário existe. Renderizando conteúdo do dashboard.');
+    // console.log('DashboardPage: Usuário existe. Renderizando conteúdo do dashboard.'); // Log (pode remover)
     return (
         <div className="dashboard-container" style={{ fontFamily: 'Arial, sans-serif', padding: '20px', maxWidth: '900px', margin: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #30c0f0', paddingBottom: '10px' }}>
@@ -102,43 +101,23 @@ function DashboardPage() {
                 <div className="dashboard-actions" style={{ flex: 1, padding: '15px', backgroundColor: '#e9ecef', borderRadius: '5px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
                     <h4>Ações Rápidas:</h4>
                     <Link to="/transferencia" style={{ 
-                        display: 'block', 
-                        width: '80%',
-                        textAlign: 'center',
-                        padding: '10px 15px', 
-                        backgroundColor: '#007bff', 
-                        color: 'white', 
-                        textDecoration: 'none', 
-                        borderRadius: '5px'
+                        display: 'block', width: '80%', textAlign: 'center', padding: '10px 15px', 
+                        backgroundColor: '#007bff', color: 'white', textDecoration: 'none', borderRadius: '5px', marginBottom: '10px'
                     }}>
                         Nova Transferência
                     </Link>
                     <Link to="/deposito" style={{ 
-                        display: 'block', 
-                        width: '80%',
-                        textAlign: 'center',
-                        padding: '10px 15px', 
-                        backgroundColor: '#28a745', // Cor diferente para depósito
-                        color: 'white', 
-                        textDecoration: 'none', 
-                        borderRadius: '5px',
-                        marginBottom: '10px' 
+                        display: 'block', width: '80%', textAlign: 'center', padding: '10px 15px', 
+                        backgroundColor: '#28a745', color: 'white', textDecoration: 'none', borderRadius: '5px', marginBottom: '10px' 
                     }}>
                         Realizar Depósito
                     </Link>
                     <Link to="/saque" style={{ 
-                        display: 'block', 
-                        width: '80%',
-                        textAlign: 'center',
-                        padding: '10px 15px', 
-                        backgroundColor: '#dc3545', // Cor diferente para saque (vermelho)
-                        color: 'white', 
-                        textDecoration: 'none', 
-                        borderRadius: '5px' 
+                        display: 'block', width: '80%', textAlign: 'center', padding: '10px 15px', 
+                        backgroundColor: '#dc3545', color: 'white', textDecoration: 'none', borderRadius: '5px' 
                     }}>
                         Realizar Saque
                     </Link>
-                    <p style={{fontSize: '0.9em', color: '#6c757d'}}>Depósito / Saque (em breve)</p>
                 </div>
             </div>
 
@@ -175,8 +154,8 @@ function DashboardPage() {
                     </ul>
                 )}
             </div>
-
-            {/* Informações de Debug - Remova ou comente em produção */}
+            
+            {/* // SEÇÃO DE DEBUG REMOVIDA/COMENTADA:
             <div style={{ marginTop: '30px', fontSize: '0.8em', wordBreak: 'break-all', border: '1px dashed #ccc', padding: '10px', backgroundColor: '#efefef' }}>
                 <p><strong>Debug Info (DashboardPage):</strong></p>
                 <p>Is Loading (AuthContext): {authIsLoading ? 'Sim' : 'Não'}</p>
@@ -185,7 +164,8 @@ function DashboardPage() {
                 <p>Transactions Loading: {transactionsLoading ? 'Sim' : 'Não'}</p>
                 <p>Transactions Error: {transactionsError || 'Nenhum erro'}</p>
                 <p>Transactions Count: {transactions.length}</p>
-            </div>
+            </div> 
+            */}
         </div>
     );
 }

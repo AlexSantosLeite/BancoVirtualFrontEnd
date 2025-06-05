@@ -1,3 +1,9 @@
+
+@use 'styles/variables';
+@use 'styles/base';
+@use 'styles/navigation';
+@use 'styles/forms';
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
