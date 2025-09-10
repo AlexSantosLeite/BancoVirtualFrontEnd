@@ -1,0 +1,30 @@
+// Mixin para centralizar elementos com Flexbox
+// Uso: @include flex-center; ou @include flex-center(column);
+@mixin flex-center($direction: row) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: $direction;
+}
+
+// Mixins para Media Queries (Design Responsivo)
+// Uso: @include for-tablet-up { ...estilos... }
+@mixin for-tablet-up {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+// Uso: @include for-desktop-up { ...estilos... }
+@mixin for-desktop-up {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+// Uso: @include truncate;
+@mixin truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

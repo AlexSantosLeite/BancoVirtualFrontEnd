@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,11 +15,10 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const validateTokenAndFetchUser = async () => {
-            console.log('AuthContext useEffect: Iniciando validação de token...');
             const storedToken = localStorage.getItem('bancoVirtualToken');
             if (storedToken) {
                 try {
-                    const response = await fetch('http://localhost:5000/api/users/me', {
+                    const response = await fetch('http://localhost:5000/api/users/profile', {
                         headers: {
                             'Authorization': `Bearer ${storedToken}`,
                         },
@@ -29,10 +27,8 @@ export const AuthProvider = ({ children }) => {
                     if (response.ok) {
                         const userData = await response.json();
                         setUser(userData);
-                        setToken(storedToken); // Garante que o token no estado é o do localStorage
-                        console.log('AuthContext useEffect: Usuário validado e carregado:', userData);
+                        setToken(storedToken);
                     } else {
-                        console.log('AuthContext useEffect: Token do localStorage inválido, removendo.');
                         localStorage.removeItem('bancoVirtualToken');
                         setToken(null);
                         setUser(null);
@@ -44,7 +40,6 @@ export const AuthProvider = ({ children }) => {
                     setUser(null);
                 }
             }
-            console.log('AuthContext useEffect: Chamando setIsLoading(false). Estado anterior de isLoading:', isLoading);
             setIsLoading(false);
         };
 
@@ -55,7 +50,6 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('bancoVirtualToken', apiResponseData.token);
         setToken(apiResponseData.token);
         setUser(apiResponseData.user);
-        console.log('AuthContext loginAction: Token e usuário salvos. Navegando para dashboard.');
         navigate('/dashboard');
     };
 
@@ -63,7 +57,6 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('bancoVirtualToken');
         setToken(null);
         setUser(null);
-        console.log('AuthContext logoutAction: Token e usuário removidos. Navegando para login.');
         navigate('/login');
     };
 
@@ -71,9 +64,8 @@ export const AuthProvider = ({ children }) => {
         if (user) { 
             setUser(prevUser => ({
                 ...prevUser,
-                saldoConta: newBalance
+                balance: newBalance
             }));
-            console.log('AuthContext updateUserBalance: Saldo do usuário atualizado no contexto para:', newBalance);
         }
     };
     

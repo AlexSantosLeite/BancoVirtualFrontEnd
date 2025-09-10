@@ -1,71 +1,53 @@
-
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Link para redirecionar para o login
-// import './RegisterPage.css'; // Se quiser criar um CSS específico
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; // 1. Importar o useAuth
 
 function RegisterPage() {
-    const [nome, setNome] = useState('');
+    // 2. Nomes dos estados padronizados para inglês para consistência
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
-    const [confirmarSenha, setConfirmarSenha] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     
     const [message, setMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const navigate = useNavigate();
+    
+    const { loginAction } = useAuth(); // Pegar a loginAction do contexto
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setMessage('');
         setIsSubmitting(true);
 
-        // Validação do frontend
-        if (!nome || !email || !senha || !confirmarSenha) {
-            setMessage('Todos os campos são obrigatórios.');
-            setIsSubmitting(false);
-            return;
-        }
-        if (senha !== confirmarSenha) {
+        if (password !== confirmPassword) {
             setMessage('As senhas não coincidem.');
             setIsSubmitting(false);
             return;
         }
-        // O backend também fará validações de tamanho da senha e formato do email
-
-        console.log('RegisterPage: Tentando registrar com:', { nome, email, senha });
 
         try {
             const response = await fetch('http://localhost:5000/api/auth/register', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ nome, email, senha }), // Só enviamos nome, email e senha para o backend
+                headers: { 'Content-Type': 'application/json' },
+                // 3. Corpo da requisição (body) corrigido para usar name e password
+                body: JSON.stringify({ name, email, password }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                console.log('RegisterPage: Cadastro bem-sucedido:', data);
-                setMessage(data.message || 'Cadastro realizado com sucesso! Você será redirecionado para o login.');
-                
-                // Limpar formulário
-                setNome('');
-                setEmail('');
-                setSenha('');
-                setConfirmarSenha('');
-
-                // Redirecionar para a página de login após um pequeno atraso para o usuário ler a mensagem
-                setTimeout(() => {
-                    navigate('/login');
-                }, 2000); // Redireciona após 2 segundos
-
+                // 4. Lógica de sucesso agora chama loginAction para auto-login!
+                // O backend já retorna o token e o usuário no registro.
+                console.log('RegisterPage: Cadastro bem-sucedido, fazendo login automático:', data);
+                loginAction(data); // O AuthContext cuida de tudo: salvar token, estado e redirecionar.
             } else {
-                console.error('RegisterPage: Erro no cadastro (API):', data);
-                setMessage(data.message || 'Erro ao tentar realizar o cadastro.');
+                // Se houver erros de validação do backend (ex: email já existe)
+                // O 'data.errors' vem do express-validator
+                const errorMessage = data.errors ? data.errors[0].msg : data.message;
+                setMessage(errorMessage || 'Erro ao tentar realizar o cadastro.');
             }
         } catch (error) {
-            console.error('RegisterPage: Erro de rede ou parse do JSON:', error);
-            setMessage('Erro de conexão ou resposta inválida do servidor ao tentar cadastrar.');
+            setMessage('Erro de conexão ou resposta inválida do servidor.');
         } finally {
             setIsSubmitting(false);
         }
@@ -74,75 +56,50 @@ function RegisterPage() {
     return (
         <div className="register-page-container" style={{maxWidth: '500px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px'}}>
             <h2>Registro de Novo Piloto</h2>
-            <form onSubmit={handleSubmit} className="register-form">
+            <form onSubmit={handleSubmit}>
+                {}
                 <div className="form-group" style={{marginBottom: '15px'}}>
-                    <label htmlFor="nome" style={{display: 'block', marginBottom: '5px'}}>Nome de Piloto (Completo):</label>
+                    <label htmlFor="name">Nome de Piloto (Completo):</label>
                     <input
-                        type="text"
-                        id="nome"
-                        value={nome}
-                        onChange={(e) => setNome(e.target.value)}
-                        required
-                        placeholder="Seu nome completo"
+                        type="text" id="name" value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required placeholder="Seu nome completo"
                         style={{width: '100%', padding: '8px', boxSizing: 'border-box'}}
                     />
                 </div>
                 <div className="form-group" style={{marginBottom: '15px'}}>
-                    <label htmlFor="email" style={{display: 'block', marginBottom: '5px'}}>Frequência de Rádio (Email):</label>
+                    <label htmlFor="email">Frequência de Rádio (Email):</label>
                     <input
-                        type="email"
-                        id="email"
-                        value={email}
+                        type="email" id="email" value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        required
-                        placeholder="seuemail@exemplo.com"
+                        required placeholder="seuemail@exemplo.com"
                         style={{width: '100%', padding: '8px', boxSizing: 'border-box'}}
                     />
                 </div>
                 <div className="form-group" style={{marginBottom: '15px'}}>
-                    <label htmlFor="senha" style={{display: 'block', marginBottom: '5px'}}>Senha de Acesso (min. 6 caracteres):</label>
+                    <label htmlFor="password">Senha de Acesso (min. 6 caracteres):</label>
                     <input
-                        type="password"
-                        id="senha"
-                        value={senha}
-                        onChange={(e) => setSenha(e.target.value)}
-                        required
-                        minLength="6"
-                        placeholder="Crie uma senha segura"
+                        type="password" id="password" value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required minLength="6" placeholder="Crie uma senha segura"
                         style={{width: '100%', padding: '8px', boxSizing: 'border-box'}}
                     />
                 </div>
                 <div className="form-group" style={{marginBottom: '20px'}}>
-                    <label htmlFor="confirmarSenha" style={{display: 'block', marginBottom: '5px'}}>Confirme sua Senha de Acesso:</label>
+                    <label htmlFor="confirmPassword">Confirme sua Senha de Acesso:</label>
                     <input
-                        type="password"
-                        id="confirmarSenha"
-                        value={confirmarSenha}
-                        onChange={(e) => setConfirmarSenha(e.target.value)}
-                        required
-                        minLength="6"
-                        placeholder="Repita a senha"
+                        type="password" id="confirmPassword" value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required minLength="6" placeholder="Repita a senha"
                         style={{width: '100%', padding: '8px', boxSizing: 'border-box'}}
                     />
                 </div>
-                <button 
-                    type="submit" 
-                    className="btn-register" 
-                    disabled={isSubmitting}
-                    style={{width: '100%', padding: '10px', backgroundColor: isSubmitting ? '#ccc' : '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: isSubmitting ? 'not-allowed' : 'pointer', fontSize: '1.1em'}}
-                >
+                <button type="submit" disabled={isSubmitting} style={{width: '100%', padding: '10px', backgroundColor: isSubmitting ? '#ccc' : '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: isSubmitting ? 'not-allowed' : 'pointer', fontSize: '1.1em'}}>
                     {isSubmitting ? 'Registrando...' : 'Confirmar Registro'}
                 </button>
             </form>
             {message && (
-                <p className="register-message" style={{
-                    marginTop: '20px', 
-                    padding: '10px', 
-                    backgroundColor: message.includes('sucesso') ? '#d4edda' : '#f8d7da', 
-                    color: message.includes('sucesso') ? '#155724' : '#721c24',
-                    border: `1px solid ${message.includes('sucesso') ? '#c3e6cb' : '#f5c6cb'}`,
-                    borderRadius: '4px'
-                }}>
+                <p style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f8d7da', color: '#721c24', border: `1px solid #f5c6cb`, borderRadius: '4px' }}>
                     {message}
                 </p>
             )}

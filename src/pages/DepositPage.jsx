@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-// import './DepositPage.css'; // Descomente se criar um CSS dedicado
 
 function DepositPage() {
     const { token, updateUserBalance } = useAuth(); // Pegamos o token e a função de atualizar saldo
@@ -19,12 +18,6 @@ function DepositPage() {
         setMessage('');
         setIsSubmitting(true);
 
-        // Validação básica do frontend
-        if (!valor) {
-            setMessage('O valor do depósito é obrigatório.');
-            setIsSubmitting(false);
-            return;
-        }
         const valorNumerico = parseFloat(valor);
         if (isNaN(valorNumerico) || valorNumerico <= 0) {
             setMessage('O valor do depósito deve ser um número positivo.');
@@ -32,14 +25,12 @@ function DepositPage() {
             return;
         }
 
-        console.log('DepositPage: Enviando depósito:', { valor: valorNumerico, descricao });
-
         try {
             const response = await fetch('http://localhost:5000/api/transactions/deposit', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`, // Token de autenticação
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({ 
                     valor: valorNumerico, 
@@ -49,28 +40,22 @@ function DepositPage() {
 
             const data = await response.json();
 
-            if (response.ok) { // Geralmente status 200 OK para depósito
-                console.log('DepositPage: Depósito bem-sucedido:', data);
-                setMessage(`Depósito de CR$ ${valorNumerico.toFixed(2)} realizado com sucesso! Seu novo saldo é CR$ ${data.saldoAtual.toFixed(2)}.`);
+            if (response.ok) {
+                setMessage(`Depósito de CR$ ${valorNumerico.toFixed(2)} realizado com sucesso! Seu novo saldo é CR$ ${data.balance.toFixed(2)}.`);
                 
-                // Atualiza o saldo no AuthContext
-                if (data.saldoAtual !== undefined) {
-                    updateUserBalance(data.saldoAtual);
+                if (data.balance !== undefined) {
+                    updateUserBalance(data.balance);
                 }
                 
-                // Limpar formulário
                 setValor('');
                 setDescricao('');
                 
-                // Opcional: Redirecionar para o dashboard após um tempo
                 // setTimeout(() => navigate('/dashboard'), 3000); 
             } else {
-                console.error('DepositPage: Erro no depósito (API):', data);
                 setMessage(data.message || 'Erro ao realizar o depósito.');
             }
         } catch (error) {
-            console.error('DepositPage: Erro de rede ou parse do JSON:', error);
-            setMessage('Erro de conexão ou resposta inválida do servidor ao tentar depositar.');
+            setMessage('Erro de conexão ou resposta inválida do servidor.');
         } finally {
             setIsSubmitting(false);
         }
